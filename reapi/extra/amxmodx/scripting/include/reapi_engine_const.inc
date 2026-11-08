@@ -203,6 +203,9 @@ enum EngineFunc
 	* Description:  Called when an entity checks collision with another entity.
 	* Return type:  int
 	* Params:       (const entity)
+	*
+	* @note         Needs the ReHLDS fork (github.com/mrc4tt/ReHLDS); on upstream ReHLDS
+	*               RegisterHookChain reports this hook as unavailable.
 	*/
 	RH_SV_TestEntityPosition,
 

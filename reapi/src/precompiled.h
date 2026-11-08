@@ -35,6 +35,7 @@
 
 // rehlds API
 #include <rehlds_api.h>
+#include <rehlds_fork_api.h>
 #include "mod_rehlds_api.h"
 
 // VTC API
