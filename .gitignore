@@ -18,3 +18,5 @@
 publish
 **/appversion.h
 **/reapi_version.inc
+build-win/
+__pycache__/
