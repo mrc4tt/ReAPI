@@ -86,6 +86,11 @@ struct regfunc
 int regfunc::current_cell = 1;
 
 #define ENG(h,...) { {}, {}, #h, "ReHLDS", [](){ return api_cfg.hasReHLDS(); }, ((!(RH_##h & (MAX_REGION_RANGE - 1)) ? regfunc::current_cell = 1, true : false) || (RH_##h & (MAX_REGION_RANGE - 1)) == regfunc::current_cell++) ? regfunc(h##__VA_ARGS__) : regfunc(#h#__VA_ARGS__), [](){ g_RehldsHookchains->h()->registerHook(&h); }, [](){ g_RehldsHookchains->h()->unregisterHook(&h); }, false}
+// Hooks of the ReHLDS fork API (IRehldsForkApi): available only when the engine is the
+// mrc4tt/ReHLDS fork; on upstream ReHLDS they report as unavailable instead of calling
+// a vtable slot that holds another function there.
+#define ENG_FORK(h,...) { {}, {}, #h, "ReHLDS fork (github.com/mrc4tt/ReHLDS)", [](){ return api_cfg.hasReHLDS() && g_RehldsForkApi != nullptr; }, ((!(RH_##h & (MAX_REGION_RANGE - 1)) ? regfunc::current_cell = 1, true : false) || (RH_##h & (MAX_REGION_RANGE - 1)) == regfunc::current_cell++) ? regfunc(h##__VA_ARGS__) : regfunc(#h#__VA_ARGS__), [](){ g_RehldsForkApi->h()->registerHook(&h); }, [](){ g_RehldsForkApi->h()->unregisterHook(&h); }, false}
+
 hook_t hooklist_engine[] = {
 	ENG(SV_StartSound),
 	ENG(SV_DropClient),
@@ -109,6 +114,7 @@ hook_t hooklist_engine[] = {
 	ENG(SV_AllowPhysent),
 	ENG(ExecuteServerStringCmd),
 	ENG(SV_SendResources, _AMXX),
+	ENG_FORK(SV_TestEntityPosition),
 };
 
 #define DLL(h,...) { {}, {}, #h, "ReGameDLL", [](){ return api_cfg.hasReGameDLL(); }, ((!(RG_##h & (MAX_REGION_RANGE - 1)) ? regfunc::current_cell = 1, true : false) || (RG_##h & (MAX_REGION_RANGE - 1)) == regfunc::current_cell++) ? regfunc(h##__VA_ARGS__) : regfunc(#h#__VA_ARGS__), [](){ g_ReGameHookchains->h()->registerHook(&h); }, [](){ g_ReGameHookchains->h()->unregisterHook(&h); }, false}

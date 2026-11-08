@@ -6,6 +6,7 @@ IRehldsServerData* g_RehldsData;
 IRehldsHookchains* g_RehldsHookchains;
 IRehldsServerStatic* g_RehldsSvs;
 IMessageManager* g_RehldsMessageManager;
+IRehldsForkApi* g_RehldsForkApi;
 
 void RehldsMessageMngr_Init();
 
@@ -82,6 +83,15 @@ bool RehldsApi_Init()
 	// message manager is available in "ReHLDS API" >= 3.14
 	if (majorVersion >= 3 && minorVersion >= 14)
 		RehldsMessageMngr_Init();
+
+	// Fork-only API (github.com/mrc4tt/ReHLDS), looked up by name: NULL on upstream ReHLDS,
+	// where the hooks that need it are just unavailable.
+	g_RehldsForkApi = (IRehldsForkApi *)ifaceFactory(VREHLDS_FORK_API_VERSION, &retCode);
+	if (g_RehldsForkApi && g_RehldsForkApi->GetMajorVersion() != REHLDS_FORK_API_VERSION_MAJOR)
+	{
+		UTIL_ServerPrint("[%s]: ReHLDS fork API major version mismatch; expected %d, real %d, fork hooks disabled\n", Plugin_info.logtag, REHLDS_FORK_API_VERSION_MAJOR, g_RehldsForkApi->GetMajorVersion());
+		g_RehldsForkApi = nullptr;
+	}
 
 	return true;
 }
